@@ -9,13 +9,21 @@ CITY_ID = {"Moscow": 524901}
 
 class APIRequest:
 
+    def __init__(self):
+       self._city_caсhe = {}       
+
     def get(self, city="Moscow"):
-        city = CITY_ID[city]
-        url = f" http://api.openweathermap.org/data/2.5/forecast?id={city}&APPID=d3f1d3de84ecef66312ed51d46a344bc"
+        if city in self._city_caсhe:
+            return self._city_caсhe[city]
+        city_id = CITY_ID[city]
+        url = f" http://api.openweathermap.org/data/2.5/forecast?id={city_id}&APPID=d3f1d3de84ecef66312ed51d46a344bc"
+        print("не работаеш")
         data  = requests.get(url).json()
         forecast_data = data["list"][0]["main"]
-        forecast_temperature = forecast_data["temp"] - 273.15
-        return forecast_temperature
+        # kelvin to celsius:
+        forecast = forecast_data["temp"] - 273.15
+        self._city_caсhe[city] = forecast
+        return forecast
 
 class CityInfo:
 
@@ -28,9 +36,10 @@ class CityInfo:
 
 
 def _main(city_name="Moscow"):
-
-    city_info = CityInfo(city_name)
-    forecast = city_info.weather_forecast()
+    weather_forecast = APIRequest()
+    for _ in range(5):
+        city_info = CityInfo(city_name, weather_forecast=weather_forecast)
+        forecast = city_info.weather_forecast()
     pprint.pprint("За окном - {0:.1f} по Цельсию".format(forecast))
 
     
