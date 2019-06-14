@@ -1,0 +1,1 @@
+A simple console application that shows the weather forecast for the selected region a few days in advance.
